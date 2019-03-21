@@ -14,6 +14,7 @@ struct PERSON{
   float Balance;
 };
 
+void printmenu();
 PERSON *readData(int &N);
 void Display(PERSON *array, int &N);
 void findRichest(PERSON *array, int &N);
@@ -24,28 +25,73 @@ int main(){
   PERSON *array;
   int size = 0;
   array = readData(size);
-
-  Display(array, size); // passing the array, P, as the first argument, and numLines as the second argument
-  cout << endl;
-
-  findRichest(array, size);
-  cout << endl;
-
   string custName;
   float amount;
 
-  cout << "Enter your full name to deposit your money: " << endl;
-  getline(cin, custName); // gets rid of the \n character
-  cout << custName << ", how much would you like to deposit? " << endl << "$";
-  cin >> amount;
-  Deposit(array, size, custName, amount);
+  int choice;
+  do
+  {
+      printmenu();
+      cin >> choice;
+      switch(choice)
+      {
+          case 1:
+              // Act on display
+              cout << endl;
+              Display(array, size);
+              cout << endl;
+              break;
 
-  newCopy("data.txt", array, size);
-  return 0;
+          case 2:
+              // Act on deposit
+              cout << endl;
+              cout << "Enter your full name to deposit your money: " << endl;
+              cin.ignore();
+              getline(cin, custName); // gets rid of the \n character
+              cout << custName << ", how much would you like to deposit? " << endl << "$";
+              cin >> amount;
+              Deposit(array, size, custName, amount);
+              break;
+
+          case 3:
+              // Act highest balance
+              cout << endl;
+              findRichest(array, size);
+              cout << endl;
+              break;
+
+          case 4:
+              // Act on update records
+              cout << endl;
+              newCopy("data.txt", array, size);
+              break;
+
+          case 5:
+              // Must call update records here before exiting the program
+              cout << endl;
+              newCopy("data.txt", array, size);
+              cout << "Exiting program." << endl;
+              break;
+
+          default:
+              cout << "Invalid entry" << endl;
+              break;
+      }
+      cout << endl;
+  } while(choice != 5);
+    return 0;
+}
+
+void printmenu() {
+    cout << "Please enter a choice:" << endl;
+    cout << "1. Display records"<< endl;
+    cout << "2. Deposit funds"<< endl;
+    cout << "3. Find Highest Balance" << endl;
+    cout << "4. Update records" << endl;
+    cout << "5. Exit the program" << endl;
 }
 
 // This function will read in the .txt file and count how many lines there are.
-
 PERSON *readData(int &N){
   ifstream file;
   file.open("data.txt");
@@ -117,7 +163,7 @@ void Deposit(PERSON *array, int &N, string custName, float amount){
   for(int i = 0; i < N; i++){
     if(custName == array[i].Name){
       array[i].Balance += amount;
-      cout << "Now your new balance is: $" << array[i].Balance << endl;
+      cout << "Now your new balance is: $" << fixed << setprecision(2) << array[i].Balance << endl;
     }
     else if (i == N){
     cout << "That name does not exist in our system." << endl;
@@ -133,5 +179,6 @@ void newCopy(string FILE, PERSON *array, int &N){
     file << array[i].Name << " ";
     file << array[i].Balance << endl;
   }
+  cout << "File updated..." << endl;
   file.close();
 }
